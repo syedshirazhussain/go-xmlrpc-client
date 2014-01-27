@@ -123,18 +123,10 @@ func buildTimeElement(t time.Time) string {
 
 func buildArrayElement(array interface{}) string {
 	buffer := `<array><data>`
-        //for _, value := range array.([]interface{}) {
-        //   buffer += buildValueElement(value)
-        //}
-// XXX
+
         a := reflect.ValueOf(array)
-	//for _, value := range array.([]interface{}) {
-	//	buffer += buildValueElement(value)
-        //}
         for i := 0; i < a.Len(); i++ {
                 buffer += buildValueElement(a.Index(i).Interface())
-                //fmt.Printf("a.Index(%d) = %v\n",i,a.Index(i).Interface())
-		//buffer += buildValueElement(value)
 	}
 
 	buffer += `</data></array>`
