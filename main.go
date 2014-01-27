@@ -1,6 +1,13 @@
 package main
 
-import ( "fmt"; "./xmlrpc"; "log"; "reflect" )
+import (
+   "fmt"
+   "./xmlrpc"
+   "log"
+   "reflect"
+   "encoding/base64"
+   "io/ioutil"
+)
 
 func check(err error) {
    if err != nil {
@@ -29,8 +36,7 @@ func main() {
                            "ids":[]string{bug_number},
                             "include_fields":[]string{
                                "file_name","id","description",
-                               "last_change_time",
-                               "is_obsolete"},
+                               "data","is_obsolete"},
                         },
                         &result,
                     )
@@ -44,33 +50,27 @@ func main() {
       return
    }
 
-   id_list := []int64{}
+   file_map := make(map[string]string)
    for i := 0; i < a.Len(); i++ {
       attachment := a.Index(i).Interface().(xmlrpc.Struct)
-      //fmt.Printf("attachment [%d] : %v\n", i, attachment)
 
-      id_list = append(id_list, attachment["id"].(int64))
       fmt.Printf("attachment [%d] ::\n", i)
       fmt.Printf("\tfile_name : %v\n", attachment["file_name"])
       fmt.Printf("\tdescription : %v\n", attachment["description"])
       fmt.Printf("\tid : %v\n", attachment["id"])
       fmt.Printf("\tis_obsolete : %v\n", attachment["is_obsolete"])
-      fmt.Printf("\tlast_change_time : %v\n", attachment["last_change_time"])
+      fmt.Printf("\tdata : %v\n", attachment["data"].(string))
+
+      if attachment["is_obsolete"].(int64) != int64(1) {
+         file_map[attachment["file_name"].(string)] = attachment["data"].(string)
+      }
    }
 
-   fmt.Printf("\nid_list : %v\n", id_list)
-
-   // fetch attachments
-   err = client.Call(
-                       "Bug.attachments",
-                       xmlrpc.Struct{
-                          "attachment_ids":id_list,
-                          "include_fields":[]string{
-                             "id","file_name",
-                             "is_obsolete","data"},
-                       },
-                       &result,
-                    )
-   check(err)
-   fmt.Printf("Bug.attachments() returned: %v\n\n", result)
+   // write out decoded files
+   for file, base64_data := range file_map {
+      data, err := base64.StdEncoding.DecodeString(base64_data)
+      check(err)
+      err = ioutil.WriteFile(file, data, 0644)
+      check(err)
+   }
 }
