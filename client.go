@@ -87,7 +87,7 @@ func (codec *clientCodec) ReadResponseHeader(response *rpc.Response) (err error)
 }
 
 func (codec *clientCodec) ReadResponseBody(x interface{}) (err error) {
-	if (x == nil) {
+	if x == nil {
 		return nil
 	}
 
