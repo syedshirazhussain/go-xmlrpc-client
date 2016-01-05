@@ -34,7 +34,7 @@ func parseFailedResponse(response []byte) (err error) {
 		return err
 	}
 
-	return &(xmlrpcError{
+	return &(Error{
 		code:    fmt.Sprintf("%v", faultDetails["faultCode"]),
 		message: faultDetails["faultString"].(string),
 	})
