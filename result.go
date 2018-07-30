@@ -11,7 +11,7 @@ import (
 
 // TIME_LAYOUT defines time template defined by iso8601, used to encode/decode time values.
 const TIME_LAYOUT = "20060102T15:04:05"
-const TIME_LAYOUT_iso8601Z       = "20060102T15:04:05Z07:00"
+const TIME_LAYOUT_iso8601Z = "20060102T15:04:05Z07:00"
 
 func parseValue(valueXml []byte) (result interface{}, err error) {
 	parser := xml.NewDecoder(bytes.NewReader(valueXml))
@@ -92,7 +92,7 @@ func getDateValue(parser *xml.Decoder) (result interface{}, err error) {
 	value, err = getElementValue(parser)
 	result, err = time.Parse(TIME_LAYOUT, value)
 	if err != nil {
-			result, err = time.Parse(TIME_LAYOUT_iso8601Z, s)
+			result, err = time.Parse(TIME_LAYOUT_iso8601Z, value)
 	}
 	return
 }
