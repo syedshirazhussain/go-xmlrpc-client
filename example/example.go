@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/syedshirazhussain/xmlrpc"
+	"github.com/syedshirazhussain/go-xmlrpc-client"
 	"io/ioutil"
 	"log"
 	"reflect"
